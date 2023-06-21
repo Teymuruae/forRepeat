@@ -58,6 +58,7 @@ tasks.withType(Test) {
 }
 
 task simple(type: Test) {
+    systemProperties(System.getProperties())
     useJUnitPlatform{
         includeTags("selenide")   //включает тесты по названию тэга, которые надо запустить
 
