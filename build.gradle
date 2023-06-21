@@ -1,0 +1,69 @@
+plugins {
+    id 'java'
+    id "io.qameta.allure" version "2.11.2"
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+allure {
+    report {
+        version.set("2.17.3") //версия Allure Report (https://github.com/allure-framework/allure2)
+    }
+    adapter {
+        aspectjWeaver.set(true) // обработка аннотации @Step
+        frameworks {
+            junit5 {
+                adapterVersion.set("2.17.3") //версия Allure JUnit5 (https://github.com/allure-framework/allure-java)
+            }
+        }
+    }
+}
+
+
+def selenideVersion = "6.15.0"
+
+dependencies {
+    testImplementation ('org.junit.jupiter:junit-jupiter:5.8.1',
+            "com.codeborne:selenide:${selenideVersion}",
+            'io.rest-assured:rest-assured:5.3.1',
+            'org.slf4j:slf4j-log4j12:2.0.6',
+            'com.codeborne:xls-test:1.4.1',
+            'com.codeborne:selenide-proxy:6.15.0',
+            'io.github.bonigarcia:webdrivermanager:5.3.3',
+            'io.qameta.allure:allure-selenide:2.17.3'
+
+    )
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+tasks.withType(Test) {
+    systemProperties(System.getProperties())
+    testLogging {
+        lifecycle {
+            events "started", "skipped", "failed", "standard_error", "standard_out"
+            exceptionFormat "short"
+        }
+    }
+}
+
+task simple(type: Test) {
+    useJUnitPlatform{
+        includeTags("selenide")   //включает тесты по названию тэга, которые надо запустить
+
+    }
+}
+
+
+
+
